@@ -1,0 +1,6 @@
+# syntax=docker/dockerfile:1
+FROM registry.suse.com/suse/ltss/sle15.5/sle15:15.5
+LABEL maintainer="Alex Munoz"
+ADD echo-good-day.sh /
+RUN chmod +x /echo-good-day.sh 
+CMD ["/echo-good-day.sh"]

@@ -1,0 +1,7 @@
+# syntax=docker/dockerfile:1
+FROM rockylinux/rockylinux:9
+# Rocky linux is a replacement for EOL Centos
+LABEL maintainer="Alex Munoz"
+ADD echo-good-day.sh /
+RUN chmod +x /echo-good-day.sh 
+CMD ["/echo-good-day.sh"]
