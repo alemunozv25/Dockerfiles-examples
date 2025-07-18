@@ -1,0 +1,49 @@
+FROM ubuntu:latest
+
+# Explicity set user.  
+USER root
+
+# Constants definition since export command only works within same RUN instruction. Use ENV for persistance to other runs
+ENV HOME=/root
+ENV NVM_DIR=/root/.nvm
+ENV NVM_VERSION=v0.40.3
+ENV NODE_VERSION=v18.20.8
+
+# Change to bash shell in make sure that commands use bash shell
+SHELL ["/bin/bash", "-c"]
+# SHELL ["/bin/bash", "--login", "-c"]
+
+# Update to latest versions and install curl  
+RUN apt-get update && apt-get install -y curl
+
+
+# Install nvm with node in the easiest way
+RUN curl https://raw.githubusercontent.com/creationix/nvm/$NVM_VERSION/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+### ALTERNATE WAY
+# # Installing NVM 
+
+# # Change options for bash shell. "-i" is for interative bash shell.  This yields a "Inappropriate ioctl for device" but finishes.
+# # This will install a node version by default
+# SHELL ["/bin/bash", "--login", "-i", "-c"]
+# RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh | bash
+
+# # Go back to regular bash shell for further steps
+# # SHELL ["/bin/bash", "--login", "-c"]
+# SHELL ["/bin/bash", "-c"]
+
+# # Install NODE. 
+# # It has to be run in the same RUN instructions because each RUN instruction executes in a different RUN context.
+# # RUN . $NVM_DIR/nvm.sh && nvm install $NODE_VERSION
+# # RUN . $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION
+# RUN . $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION && nvm use default
+
+
+ENV NODE_PATH=$NVM_DIR/versions/node/$NODE_VERSION/bin
+ENV PATH=$NODE_PATH:$PATH
+
+CMD node --version
