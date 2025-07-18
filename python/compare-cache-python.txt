@@ -1,0 +1,17 @@
+FROM python:3.11
+WORKDIR /app
+COPY src src
+RUN pip install -r src/requirements.txt
+CMD ["python", "my_app.py"]
+
+(https://www.augmentedmind.de/2024/06/09/optimize-docker-development-speed/)
+The problem here is that the frequent code changes (happening in the src folder) invalidate the cached layer for line #3. 
+Thus, the layers built for lines 3-5 must be rebuilt on each code change, and the pip install command is rather slow. 
+You can improve this example as follows:
+
+FROM python:3.11
+WORKDIR /app
+COPY ./src/requirements.txt .
+RUN pip install -r requirements.txt
+COPY src src
+CMD ["python", "my_app.py"]
