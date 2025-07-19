@@ -1,11 +1,22 @@
-# syntax=docker/dockerfile:1
-
 # Use Ubuntu 24.04 base image
 FROM ubuntu:24.04
 
-# Install golang
-# RUN apt-get update && apt-get install -y wget git gcc
-RUN apt-get update && apt-get install -y curl golang-go
+# Constants definition since export command only works within same RUN instruction. Use ENV for persistance to other runs
+ENV GO_VERSION=1.24.5
+
+# Install golang desired version
+RUN apt-get update \
+    && apt-get install -y wget \
+    && wget -c https://go.dev/dl/go$GO_VERSION.linux-amd64.tar.gz \
+    && rm -rf /usr/local/go \
+    && tar -C /usr/local/ -xzf go$GO_VERSION.linux-amd64.tar.gz
+
+ENV PATH=$PATH:/usr/local/go/bin
+
+#wget -c https://go.dev/dl/go1.24.0.linux-amd64.tar.gz
+#sudo rm -rf /usr/local/go
+#sudo tar -C /usr/local/ -xzf go1.24.0.linux-amd64.tar.gz
+#export PATH=$PATH:/usr/local/go/bin
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -16,6 +27,7 @@ COPY . .
 
 # Build the Go application
 RUN go build -o main .
+#RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo_off -ldflags="-s -w" -o main .
 
 # Expose the port the application listens on
 EXPOSE 8888
