@@ -135,12 +135,12 @@ curl: (52) Empty reply from server
 docker kill 3f91b4fb025e
 
 . Check Node version 
-docker run -it -p 8181:8181 node22-webserver:node /bin/bash -c 'node version'
+docker run -it -p 8181:8181 node22-webserver:node /bin/bash -c 'node --version' => bash shell is not recognized
 node:internal/modules/cjs/loader:1404
   throw err;
   ^
 
-Error: Cannot find module '/bin/bash'
+Error: Cannot find module '/home/node/app/bash'
     at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
@@ -155,4 +155,58 @@ Error: Cannot find module '/bin/bash'
 
 Node.js v22.17.1
 
-=> This is somehow expected since the base of Dockerfile is node:22-alpine and not an OS
+.Testing again with sh:
+docker run -it -p 8181:8181 node22-webserver:node sh -c 'node --version'
+v22.17.1
+
+---
+---
+SIMPLE SERVER USING NODE 22 via Ubuntu 24.04
+
+docker build -f node22-ubuntu-webserver-Dockerfile -t node22-ubuntu-webserver:node --no-cache --progress=plain .
+
+docker images | grep -E 'TAG|node22-ubuntu-webserver' 
+REPOSITORY                         TAG       IMAGE ID       CREATED          SIZE
+node22-ubuntu-webserver            node      6f450e97b62a   40 seconds ago   391MB
+
+docker run -p 8282:8282 node22-ubuntu-webserver:node
+Server running at http://127.0.0.1:8282/
+. and running curl -v localhost:8282 from another terminal:
+curl -v 127.0.0.1:8282
+*   Trying 127.0.0.1:8282...
+* Connected to 127.0.0.1 (127.0.0.1) port 8282
+> GET / HTTP/1.1
+> Host: 127.0.0.1:8282
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+* Empty reply from server
+* Closing connection
+curl: (52) Empty reply from server
+
+.Run Docker container in detached mode (web server in port 8181)
+docker run -d -p 8282:8282 node22-ubuntu-webserver:node
+
+
+. Test detached docker container using curl
+docker run -d -p 8282:8282 node22-ubuntu-webserver:node && sleep 3 && curl -v 127.0.0.1:8282
+17919ff3bc8bb81ec2f2bc477f2d64369d3e977d5466f9c38af9899f8096ab91
+*   Trying 127.0.0.1:8282...
+* Connected to 127.0.0.1 (127.0.0.1) port 8282
+> GET / HTTP/1.1
+> Host: 127.0.0.1:8282
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+* Empty reply from server
+* Closing connection
+curl: (52) Empty reply from server
+
+. Remove detached container:
+docker kill 17919ff3bc8b
+
+. Check Node version 
+docker run -it -p 8282:8282 node22-ubuntu-webserver:node /bin/bash -c 'node --version'
+v22.17.1
