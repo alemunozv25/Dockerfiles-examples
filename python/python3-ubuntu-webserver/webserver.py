@@ -2,7 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 
 # hostName = "localhost" 
-hostName = "0.0.0.0" #It is best to use 0.0.0.0 since using 120.0.0.1/localhost will have issues with python code in container.
+hostName = "0.0.0.0" #It is best to use 0.0.0.0 since using 127.0.0.1/localhost will have issues with python code in container.
 serverPort = 8484
 
 ## Simplest configuration with only GET and text
