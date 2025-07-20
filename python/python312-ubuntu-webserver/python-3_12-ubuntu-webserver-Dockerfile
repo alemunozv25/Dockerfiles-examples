@@ -1,0 +1,31 @@
+FROM ubuntu:24.04
+
+RUN apt-get update && apt-get install -y python3
+
+#RUN mkdir -p /usr/src/app
+#WORKDIR /usr/src/app
+
+# create working directory and install pip dependencies
+#COPY requirements.txt requirements.txt
+
+# Install requirements
+#RUN pip3 install -r requirements.txt
+
+# copy python project files from local to /hello-py image working directory
+ADD index.html index.html
+ADD webserver.py webserver.py
+# COPY . .
+
+EXPOSE 8484
+
+#ENTRYPOINT [“python3”, “webserver.py”]
+# ENTRYPOINT python3 webserver.py
+
+#CMD [“python3”, “webserver.py”]
+#CMD python3 webserver.py
+
+# Show stdout from container to host
+ENV PYTHONUNBUFFERED=1
+
+# run python server to all interfaces in locahost
+CMD [ "python3", "webserver.py", "--host=0.0.0.0"]
