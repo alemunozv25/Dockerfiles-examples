@@ -25,5 +25,5 @@ COPY --chown=node:node . .
 # Expose the port your Node.js application listens on
 EXPOSE 8181
 
-# Define the command to run when the container starts
-CMD ["node", "node-web-server.js"]
+# Define the executable to run when the container starts
+ENTRYPOINT ["node", "node-web-server.js"]
