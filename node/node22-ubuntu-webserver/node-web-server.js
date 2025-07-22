@@ -1,7 +1,7 @@
 
 const http = require("http");
 
-const hostname = '127.0.0.1'; // localhost
+const hostname = '0.0.0.0'; // All network interfaces (better for containers usage)
 const port = 8282;
 
 const requestListener = function (req, res) {
