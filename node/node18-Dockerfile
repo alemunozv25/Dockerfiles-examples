@@ -1,3 +1,4 @@
 FROM node:18
 
-CMD node --version
+# CMD node --version
+ENTRYPOINT ["node", "--version"]
